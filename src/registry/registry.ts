@@ -13,6 +13,12 @@ export async function launchRegistry() {
   _registry.use(express.json());
 
   let registeredNodes: Node[] = [];
+  
+  function getNodeRegistry(req: Request, res: Response<GetNodeRegistryBody>) {
+    return res.json({
+      nodes: Array.from(registeredNodes),
+    });
+  }
 
   _registry.post("/registerNode", (req: Request<any, any, Node>, res: Response) => {
     const { nodeId, pubKey } = req.body;
@@ -33,9 +39,12 @@ export async function launchRegistry() {
     res.send("live");
   });
 
+  _registry.get("/getNodeRegistry", getNodeRegistry);
+
   const server = _registry.listen(REGISTRY_PORT, () => {
     console.log(`registry is listening on port ${REGISTRY_PORT}`);
   });
 
   return server;
 }
+
