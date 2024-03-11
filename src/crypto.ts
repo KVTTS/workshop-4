@@ -132,7 +132,7 @@ export async function createRandomSymmetricKey(): Promise<webcrypto.CryptoKey> {
   //      keys are extractable.
   const key = await crypto.subtle.generateKey(
     {
-      name: "AES-GCM",
+      name: "AES-CBC",
       length: 256
     },
     true, 
@@ -158,7 +158,7 @@ export async function importSymKey(
   // TODO implement this function to go back from the result of the exportSymKey function to it's native crypto key object
   const jwkString = Buffer.from(strKey, "base64").toString("utf-8");
   const jwk = JSON.parse(jwkString);
-  const key = await crypto.subtle.importKey("jwk", jwk, { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
+  const key = await crypto.subtle.importKey("jwk", jwk, { name: "AES-CBC" }, true, ["encrypt", "decrypt"]);
   return key;
 }
 
@@ -167,7 +167,7 @@ export async function symEncrypt(key: webcrypto.CryptoKey,data: string): Promise
   // TODO implement this function to encrypt a base64 encoded message with a public key
   // tip: encode the data to a uin8array with TextEncoder
   const dataArray = new TextEncoder().encode(data);
-  const encryptedData = await crypto.subtle.encrypt({ name: "AES-GCM" }, key, dataArray);
+  const encryptedData = await crypto.subtle.encrypt({ name: "AES-CBC" }, key, dataArray);
   const encryptedBase64 = Buffer.from(encryptedData).toString("base64");
   return encryptedBase64;
 }
@@ -178,7 +178,7 @@ export async function symDecrypt(strKey: string,encryptedData: string): Promise<
   // tip: use the provided base64ToArrayBuffer function and use TextDecode to go back to a string format
   const key = await importSymKey(strKey);
   const encryptedArray = base64ToArrayBuffer(encryptedData);
-  const decryptedData = await crypto.subtle.decrypt({ name: "AES-GCM" }, key, encryptedArray);
+  const decryptedData = await crypto.subtle.decrypt({ name: "AES-CBC" }, key, encryptedArray);
   const decryptedString = new TextDecoder().decode(decryptedData);
   return decryptedString;
 }
