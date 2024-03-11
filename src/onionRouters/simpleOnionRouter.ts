@@ -8,7 +8,27 @@ export async function simpleOnionRouter(nodeId: number) {
   onionRouter.use(bodyParser.json());
 
   // TODO implement the status route
-  // onionRouter.get("/status", (req, res) => {});
+  onionRouter.get("/status", (req:any, res:any) => {
+    res.send("live");
+  });
+
+  let getLastReceivedEncryptedMessage: string | null = null;
+
+  onionRouter.get("/getLastReceivedEncryptedMessage", (req: any, res: any) => {
+    res.json({ result: getLastReceivedEncryptedMessage})
+  });
+
+  let getLastReceivedDecryptedMessage: string | null = null;
+
+  onionRouter.get("/getLastReceivedDecryptedMessage", (req: any, res: any) => {
+    res.json({ result: getLastReceivedDecryptedMessage})
+  });
+
+  let getLastMessageDestination: string | null = null;
+
+  onionRouter.get("/getLastMessageDestination", (req: any, res: any) => {
+    res.json({ result: getLastMessageDestination})
+  });
 
   const server = onionRouter.listen(BASE_ONION_ROUTER_PORT + nodeId, () => {
     console.log(
